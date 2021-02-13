@@ -1,0 +1,32 @@
+﻿import React from "react";
+import youtubeHttpClient from "../../httpClients/youtubeHttpClient";
+
+class VideoDetails extends React.Component {
+    render() {
+        if (!this.props.video) {
+            return null;
+        }
+        
+        return (
+          <div>
+              <div className="ui embed">
+                  <iframe src={this.getEmbedUrl()} title="Video player"/>
+              </div>
+              <div className="ui segment">
+                  <h4 className="ui header">
+                      {this.props.video.snippet.title}
+                  </h4>
+                  <p>
+                      {this.props.video.snippet.description}
+                  </p>
+              </div>
+          </div>  
+        );
+    }
+    
+    getEmbedUrl() {
+        return youtubeHttpClient.getEmbedUrl(this.props.video.id.videoId);
+    }
+}
+
+export default VideoDetails

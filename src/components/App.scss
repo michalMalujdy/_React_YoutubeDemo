@@ -1,0 +1,7 @@
+﻿.app {
+    width: 80vw;
+    
+    @media (max-width: 960px) {
+        width: 95vw;
+    }
+}
