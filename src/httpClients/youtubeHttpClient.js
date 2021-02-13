@@ -9,16 +9,17 @@ class YoutubeHttpClient {
             baseURL: baseURL,
             params: {
                 part: "snippet",
-                maxResults: 10,
                 key: key
             }
         });
     }
     
-    getVideos(searchTerm) {        
+    getVideos(searchTerm, maxResults = 10, pageToken = '') {        
         const config = {
             params: {
-                q: searchTerm
+                q: searchTerm,
+                pageToken: pageToken,
+                maxResults: maxResults
             }
         };
         
