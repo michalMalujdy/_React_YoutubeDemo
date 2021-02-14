@@ -14,7 +14,8 @@ class App extends React.Component {
         
         this.state = {
             searchTerm: '',
-            videosLoading: false,
+            videosInitialLoading: false,
+            moreVideosLoading: false,
             videos: [],
             pageSize: 10,
             nextPageToken: '',
@@ -26,8 +27,10 @@ class App extends React.Component {
         return (
             <div className="app">
                 <SearchBar onSubmit={this.onSearchSubmit}/>
-                <VideoDetails video={this.state.selectedVideo}/>              
-                {this.renderVideoSnippets()}
+                <VideoDetails video={this.state.selectedVideo}/>
+                <div style={{ paddingBottom: "50px" }}>
+                    {this.renderVideoSnippets()}
+                </div>
             </div>
         )
     }
@@ -36,7 +39,7 @@ class App extends React.Component {
         this.setState({
             ...this.state,
             searchTerm: searchTerm,
-            videosLoading: true
+            videosInitialLoading: true
         });
         
         const result = await youtubeHttpClient.getVideos(searchTerm, this.state.pageSize);
@@ -45,15 +48,19 @@ class App extends React.Component {
         this.setState({
             ...this.state,
             selectedVideo: null,
-            videosLoading: false,
+            videosInitialLoading: false,
             videos: result.data.items,
             nextPageToken: result.data.nextPageToken
         });
     };
 
     renderVideoSnippets = () => {
-        if (this.state.videosLoading) {
+        if (this.state.videosInitialLoading) {
             return <Loader/>;
+        }
+        
+        if (this.state.videos.length === 0) {
+            return null;
         }
         
         return (
@@ -94,14 +101,13 @@ class App extends React.Component {
     }
 
     onLoadMoreVideos = async () => {
-        console.log('onLoadMoreVideos');
-        if(this.state.videosLoading) {
+        if(this.state.moreVideosLoading) {
             return;
         }
         
         this.setState({
             ...this.state,
-            videosLoading: true
+            moreVideosLoading: true
         });
         
         const result = await youtubeHttpClient.getVideos(
@@ -111,8 +117,8 @@ class App extends React.Component {
         
         this.setState({
             ...this.state,
-            videosLoading: false,
-            videos: result.data.items,
+            moreVideosLoading: false,
+            videos: this.state.videos.concat(result.data.items),
             nextPageToken: result.data.nextPageToken    
         });
     }
