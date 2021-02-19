@@ -1,5 +1,6 @@
 ﻿import React from "react";
 import youtubeHttpClient from "../../httpClients/youtubeHttpClient";
+import "./VideoDetails.scss"
 
 class VideoDetails extends React.Component {
     render() {
@@ -8,7 +9,7 @@ class VideoDetails extends React.Component {
         }
         
         return (
-          <div>
+          <div className="video-details">
               <div className="ui embed">
                   <iframe src={this.getEmbedUrl()} title="Video player"/>
               </div>

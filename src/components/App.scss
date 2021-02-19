@@ -1,7 +1,12 @@
 ﻿.app {
     width: 80vw;
+    padding-top: 10px;
     
     @media (max-width: 960px) {
         width: 95vw;
+    }
+    
+    &_video-snippets {
+        padding-bottom: 50px;
     }
 }

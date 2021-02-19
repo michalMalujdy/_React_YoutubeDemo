@@ -28,7 +28,7 @@ class App extends React.Component {
             <div className="app">
                 <SearchBar onSubmit={this.onSearchSubmit}/>
                 <VideoDetails video={this.state.selectedVideo}/>
-                <div style={{ paddingBottom: "50px" }}>
+                <div className="app_video-snippets">
                     {this.renderVideoSnippets()}
                 </div>
             </div>
@@ -43,20 +43,19 @@ class App extends React.Component {
         });
         
         const result = await youtubeHttpClient.getVideos(searchTerm, this.state.pageSize);
-        console.log(result);
         
         this.setState({
             ...this.state,
             selectedVideo: null,
             videosInitialLoading: false,
-            videos: result.data.items,
+            videos: this.getMergedUniqueVideos(result.data.items),
             nextPageToken: result.data.nextPageToken
         });
     };
 
     renderVideoSnippets = () => {
         if (this.state.videosInitialLoading) {
-            return <Loader/>;
+            return <Loader key="initial-loader"/>;
         }
         
         if (this.state.videos.length === 0) {
@@ -65,24 +64,21 @@ class App extends React.Component {
         
         return (
             <InfiniteScroll
-                pageStart={0}
+                pageStart={1}
                 loadMore={this.onLoadMoreVideos}
                 hasMore={true}
-                loader={<Loader/>}
+                loader={<Loader key="infinite-scroll-loader"/>}
                 initialLoad={false}
             >
                 <div className="ui relaxed divided list">
                     {this.renderVideoItems()}
                 </div>
             </InfiniteScroll>
-        // <div className="ui relaxed divided list">
-        //     {this.renderVideoItems()}
-        // </div>
         )
     }
 
     renderVideoItems = () => {
-        if(this.state.videos.length === 0) {
+        if (this.state.videos.length === 0) {
             return null;
         }
         
@@ -118,8 +114,32 @@ class App extends React.Component {
         this.setState({
             ...this.state,
             moreVideosLoading: false,
-            videos: this.state.videos.concat(result.data.items),
-            nextPageToken: result.data.nextPageToken    
+            videos: this.getMergedUniqueVideos(result.data.items),
+            nextPageToken: result.data.nextPageToken
+        });
+    }
+    
+    getMergedUniqueVideos = (newVideos) => {
+        const mergedVideos = this.state.videos.concat(newVideos);
+        const uniqueVideos = [];
+        
+        for (let i = 0; i < mergedVideos.length; i++) {
+            let video = mergedVideos[i];
+            if (this.hasVideoId(video) && !this.isVideoDuplicate(uniqueVideos, video)) {
+                uniqueVideos.push(video);
+            }
+        }
+        
+        return uniqueVideos;
+    }
+    
+    hasVideoId = (video) => {
+        return !!video.id.videoId
+    }
+
+    isVideoDuplicate = (uniqueVideos, video) => {
+        return uniqueVideos.find((x) => {
+            return x.id.videoId === video.id.videoId
         });
     }
 }
