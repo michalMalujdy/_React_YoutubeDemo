@@ -1,7 +1,7 @@
 ﻿import axios from "axios";
 
 const baseURL = "https://www.googleapis.com/youtube/v3";
-const key = "AIzaSyCvgQQJEHMzHvwCTZdzNg56hPX8ZK0S43s"
+const key = "AIzaSyBpkvPBHCfJL6UtFYWOzGKAN7gNV9u1_hc"
 
 class YoutubeHttpClient {
     constructor() {
