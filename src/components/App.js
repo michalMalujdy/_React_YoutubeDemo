@@ -43,12 +43,12 @@ class App extends React.Component {
         });
         
         const result = await youtubeHttpClient.getVideos(searchTerm, this.state.pageSize);
-        
+
         this.setState({
             ...this.state,
             selectedVideo: null,
             videosInitialLoading: false,
-            videos: this.getMergedUniqueVideos(result.data.items),
+            videos: result.data.items,
             nextPageToken: result.data.nextPageToken
         });
     };
